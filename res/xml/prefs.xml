@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+  xmlns:android="http://schemas.android.com/apk/res/android">
+  <ListPreference
+  android:key="size"
+  android:entries="@array/size"
+  android:entryValues="@array/values"
+  android:summary="How many things should be in the list?"
+  android:title="List length"
+  />
+  <ListPreference 
+  android:key="layout"
+  android:entries="@array/layout"
+  android:entryValues="@array/values"
+  android:title="Layout"
+  android:summary="Which layout do you want?"
+  />
+</PreferenceScreen>
