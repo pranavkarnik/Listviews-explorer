@@ -111,7 +111,7 @@ public class Main extends ListActivity {
         // add a footer if one is specified
         int sFooterLayout = SCROLLING_FOOTERS[getIntPref(PREF_SCROLLING_FOOTER)];
         if(sFooterLayout > 0) {
-        	EventListener el = new EventListener("header", R.menu.footer_item);
+        	EventListener el = new EventListener("footer", R.menu.footer_item);
         	mFooterView = getLayoutInflater().inflate(sFooterLayout, null);
         	lv.addFooterView(mFooterView);
         	addHFEventListeners(mFooterView, el);
@@ -130,8 +130,8 @@ public class Main extends ListActivity {
         if(getBoolPref(Events.LI_CTXMENU)) lv.setOnCreateContextMenuListener(el);
         // set a listener to set focus properly when sub-elements get focus
         if(getBoolPref(Strategy.FOCUS_SELECT_LISTEN)) {
-        	lv.setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
-        	lv.setOnItemSelectedListener(el);
+        	lv.setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);
+        	lv.setOnItemSelectedListener(new FocusSelectListener());
         }
     }
 
@@ -175,6 +175,9 @@ public class Main extends ListActivity {
 			break;
 		case R.id.events:
 			showDialog(DIALOG_EVENTS);
+			break;
+		case R.id.strategies:
+			showDialog(DIALOG_STRATEGIES);
 			break;
 		}
     	return super.onOptionsItemSelected(item);
@@ -252,7 +255,7 @@ public class Main extends ListActivity {
 		super.onPrepareDialog(id, dialog);
 	}
 	
-	class EventListener implements View.OnClickListener, OnCreateContextMenuListener, OnItemClickListener, OnItemLongClickListener, OnLongClickListener, OnItemSelectedListener {
+	class EventListener implements View.OnClickListener, OnCreateContextMenuListener, OnItemClickListener, OnItemLongClickListener, OnLongClickListener {
 		private final String context;
 		private final int menuId;
 
@@ -312,18 +315,21 @@ public class Main extends ListActivity {
 			Log.d(TAG, msg);
 			return false;
 		}
-
-		// OnItemSelectedListener
+	}
+	
+	class FocusSelectListener implements OnItemSelectedListener {
+		// OnItemSelectedListener, part of the FOCUS_SELECT_LISTEN strategy
 		public void onItemSelected(AdapterView<?> parent, View view,
 				int position, long id) {
 			ListView listView = getListView();
+			Log.d(TAG, "onItemSelected gave us " + view.toString());
 			Button b = (Button) view.findViewById(R.id.button);
 			EditText et = (EditText) view.findViewById(R.id.editor);
 		    if (b != null || et != null) {
 		        // Use afterDescendants to keep ListView from getting focus
 		        listView.setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
-		        if(b!=null) b.requestFocus();
 		        if(et!=null) et.requestFocus();
+		        else if(b!=null) b.requestFocus();
 		    } else {
 		        if (!listView.isFocused()) {
 		            // Use beforeDescendants so that previous selections don't re-take focus

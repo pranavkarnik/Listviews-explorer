@@ -20,4 +20,8 @@
   android:title="Enable events"
   android:titleCondensed="Events"
   />
+  <item android:id="@+id/strategies"
+  android:title="Enable strategies"
+  android:titleCondensed="Strategies"
+  />
 </menu>
